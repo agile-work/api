@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/render"
 )
 
-//Routes return all services admin routes
+// Routes return all services admin routes
 func Routes() *chi.Mux {
 	r := chi.NewRouter()
 

@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-//Service defines each installed service
+// Service defines each installed service
 type Service struct {
 	Name            string    `json:"name"`
 	Type            string    `json:"type"`
@@ -15,7 +15,7 @@ type Service struct {
 	NextServerIndex int       `json:"nextServerIndex"`
 }
 
-//Server returns server to execute request with round robin balance
+// Server returns server to execute request with round robin balance
 func (s *Service) Server() *Server {
 	server := s.Servers[s.NextServerIndex]
 	NextServerIsDown := false
@@ -43,12 +43,12 @@ func (s *Service) Server() *Server {
 	return server
 }
 
-//Match check if this service can process this path
+// Match check if this service can process this path
 func (s *Service) Match(path string) bool {
 	return strings.Contains(path, s.Type)
 }
 
-//Request executes the request returning a response
+// Request executes the request returning a response
 func (s *Service) Request(client *http.Client, path, method string, header http.Header, body io.Reader) (*http.Response, error) {
 	maxRetryAttempts := len(s.Servers) - 1
 	server := s.Server()
@@ -67,14 +67,14 @@ func (s *Service) Request(client *http.Client, path, method string, header http.
 	return response, err
 }
 
-//Ping check service is alive
+// Ping check service is alive
 func (s *Service) Ping(client *http.Client) {
 	for i, server := range s.Servers {
 		s.Servers[i].UP = server.Ping(client)
 	}
 }
 
-//PingDownServers ping down servers from this service
+// PingDownServers ping down servers from this service
 func (s *Service) PingDownServers(client *http.Client) {
 	for i, server := range s.Servers {
 		if server.UP == false {

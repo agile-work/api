@@ -13,13 +13,13 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-//Services defines the structure to deal with all available services
+// Services defines the structure to deal with all available services
 type Services struct {
 	List   []*Service `json:"list" toml:"service"`
 	Client *http.Client
 }
 
-//Process request and select to correct service
+// Process request and select to correct service
 func (s *Services) Process(path, method string, header http.Header, body io.Reader) (*http.Response, error) {
 	for _, service := range s.List {
 		if service.Match(path) {
@@ -29,7 +29,7 @@ func (s *Services) Process(path, method string, header http.Header, body io.Read
 	return nil, errors.New("invalid path no service to responde")
 }
 
-//Load decode toml config file
+// Load decode toml config file
 func (s *Services) Load(verbose bool) error {
 	fmt.Println("Loading services")
 
@@ -50,7 +50,7 @@ func (s *Services) Load(verbose bool) error {
 	return nil
 }
 
-//VerifyDownServers ping all down servers in the service
+// VerifyDownServers ping all down servers in the service
 func (s *Services) VerifyDownServers() {
 	for _, service := range s.List {
 		service.PingDownServers(s.Client)
@@ -59,7 +59,7 @@ func (s *Services) VerifyDownServers() {
 
 var srv *Services
 
-//New load services from file and returns a pointer
+// New load services from file and returns a pointer
 func New(certPath, keyPath string) *Services {
 	cert, err := tls.LoadX509KeyPair(certPath, keyPath)
 	if err != nil {
