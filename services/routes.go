@@ -4,12 +4,17 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
 )
 
 // Routes return all services admin routes
 func Routes() *chi.Mux {
 	r := chi.NewRouter()
+
+	r.Use(
+		middleware.Logger,
+	)
 
 	// v1/api/admin/services
 	r.Route("/", func(r chi.Router) {

@@ -11,8 +11,11 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/agile-work/api/middlewares"
+
 	"github.com/agile-work/api/services"
 	"github.com/go-chi/chi"
+	"github.com/go-chi/cors"
 )
 
 var (
@@ -29,6 +32,20 @@ func main() {
 	s := services.New(*cert, *key)
 
 	r := chi.NewRouter()
+
+	cors := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Language", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300, // Maximum value not ignored by any of major browsers
+	})
+
+	r.Use(
+		cors.Handler,
+		middlewares.Authorization,
+	)
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Mount("/admin/services", services.Routes())

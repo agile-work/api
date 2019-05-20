@@ -12,28 +12,28 @@ type Service struct {
 	Name            string    `json:"name"`
 	Type            string    `json:"type"`
 	Servers         []*Server `json:"servers" toml:"server"`
-	NextServerIndex int       `json:"nextServerIndex"`
+	nextServerIndex int
 }
 
 // Server returns server to execute request with round robin balance
 func (s *Service) Server() *Server {
-	server := s.Servers[s.NextServerIndex]
-	NextServerIsDown := false
+	server := s.Servers[s.nextServerIndex]
+	nextServerIsDown := false
 
 	i := 0
 	for server.UP == false && i < len(s.Servers) {
-		NextServerIsDown = true
+		nextServerIsDown = true
 		server = s.Servers[i]
 		i++
 	}
 
-	s.NextServerIndex++
-	if NextServerIsDown {
-		s.NextServerIndex = i
+	s.nextServerIndex++
+	if nextServerIsDown {
+		s.nextServerIndex = i
 	}
 
-	if s.NextServerIndex >= len(s.Servers) {
-		s.NextServerIndex = 0
+	if s.nextServerIndex >= len(s.Servers) {
+		s.nextServerIndex = 0
 	}
 
 	if server.UP == false {
