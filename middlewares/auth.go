@@ -12,7 +12,7 @@ import (
 func Authorization(next http.Handler) http.Handler {
 	// TODO: Pensar em um jeito talvez de desconsiderar o token e utilizar o certificado p/ garantir a segurança na comunicação dos serviços com a api
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !strings.Contains(r.RequestURI, "/auth/login") && r.Method != "OPTIONS" {
+		if !strings.Contains(r.RequestURI, "/auth/login") {
 			token, err := jwt.ParseWithClaims(r.Header.Get("Authorization"), &models.UserCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 				return []byte("AllYourBase"), nil // TODO: Check the best place for this key, probably the config.toml
 			})

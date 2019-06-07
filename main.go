@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/agile-work/api/middlewares"
+	"github.com/agile-work/srv-shared/sql-builder/db"
 
 	"github.com/agile-work/api/services"
 	"github.com/go-chi/chi"
@@ -19,9 +20,14 @@ import (
 )
 
 var (
-	addr = flag.String("port", ":8080", "TCP port to listen to")
-	cert = flag.String("cert", "cert.pem", "Path to certification")
-	key  = flag.String("key", "key.pem", "Path to certification key")
+	addr     = flag.String("port", ":8080", "TCP port to listen to")
+	cert     = flag.String("cert", "cert.pem", "Path to certification")
+	key      = flag.String("key", "key.pem", "Path to certification key")
+	host     = "cryo.cdnm8viilrat.us-east-2.rds-preview.amazonaws.com"
+	port     = 5432
+	user     = "cryoadmin"
+	password = "x3FhcrWDxnxCq9p"
+	dbName   = "cryo"
 )
 
 func main() {
@@ -30,6 +36,13 @@ func main() {
 
 	flag.Parse()
 	s := services.New(*cert, *key)
+
+	err := db.Connect(host, port, user, password, dbName, false)
+	if err != nil {
+		fmt.Println("Error connecting to database")
+		return
+	}
+	fmt.Println("Database connected")
 
 	r := chi.NewRouter()
 
@@ -45,6 +58,7 @@ func main() {
 	r.Use(
 		cors.Handler,
 		middlewares.Authorization,
+		middlewares.GetUser,
 	)
 
 	r.Route("/api/v1", func(r chi.Router) {
