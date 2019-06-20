@@ -18,6 +18,13 @@ func Authorization(next http.Handler) http.Handler {
 				return
 			}
 
+			if value, ok := payload["code"]; ok {
+				r.Header.Add("username", value.(string))
+			} else {
+				http.Error(w, "invalid token", http.StatusUnauthorized)
+				return
+			}
+
 			if value, ok := payload["user_id"]; ok {
 				r.Header.Add("userID", value.(string))
 			} else {
