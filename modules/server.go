@@ -1,4 +1,4 @@
-package services
+package modules
 
 import (
 	"fmt"
@@ -8,10 +8,12 @@ import (
 
 // Server defines the connection to this service in a server
 type Server struct {
-	Name string `json:"name"`
-	Host string `json:"host"`
-	Port int    `json:"port"`
-	UP   bool   `json:"up"`
+	InstanceCode string `json:"instance_code"`
+	Name         string `json:"name"`
+	Host         string `json:"host"`
+	Port         int    `json:"port"`
+	PID          int    `json:"pid"`
+	UP           bool
 }
 
 // Request executes the request to a server returning a response
@@ -24,21 +26,12 @@ func (s *Server) Request(client *http.Client, path, method string, header http.H
 	return client.Do(req)
 }
 
-// Ping check server is alive
-func (s *Server) Ping(client *http.Client) bool {
-	resp, _ := s.Request(client, "/ping", http.MethodGet, nil, nil)
-	if resp != nil && resp.StatusCode == http.StatusOK {
-		return true
-	}
-	return false
+// Addr returns host:port from theis server
+func (s *Server) Addr() string {
+	return fmt.Sprintf("%s:%d", s.Host, s.Port)
 }
 
 // URL returns server URL to some path
 func (s *Server) URL(path string) string {
 	return fmt.Sprintf("https://%s:%d%s", s.Host, s.Port, path)
-}
-
-// URL returns server informations
-func (s *Server) String() string {
-	return fmt.Sprintf("Server: %s (%s:%d) - UP:%t", s.Name, s.Host, s.Port, s.UP)
 }
