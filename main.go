@@ -50,7 +50,7 @@ func main() {
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Mount("/admin/services", services.Routes())
 		r.HandleFunc("/*", func(rw http.ResponseWriter, r *http.Request) {
-			path := html.EscapeString(r.URL.Path)
+			path := html.EscapeString(r.URL.RequestURI())
 			resp, err := s.Process(path, r.Method, r.Header, r.Body)
 			if err != nil {
 				rw.WriteHeader(http.StatusNotFound)
