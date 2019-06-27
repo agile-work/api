@@ -63,6 +63,10 @@ func (mdls *Modules) Load() error {
 		}
 	}
 
+	if len(modulesInstanceIDs) == 0 {
+		mdls.List = make(map[string]*Module)
+	}
+
 	for _, m := range mdls.List {
 		fmt.Printf("module %s(instances:%d) ready\n", m.Name, len(m.Servers))
 	}
