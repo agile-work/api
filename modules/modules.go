@@ -56,7 +56,7 @@ func (mdls *Modules) Load() error {
 			if err := rdb.Delete(moduleDefRedisKey); err != nil {
 				return err
 			}
-			if _, err := rdb.LRem("api:modules", 0, moduleDefRedisKey); err != nil {
+			if _, err := rdb.LRem("api:modules", 0, instanceCode); err != nil {
 				return err
 			}
 			continue
