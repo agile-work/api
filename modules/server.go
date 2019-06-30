@@ -35,3 +35,15 @@ func (s *Server) Addr() string {
 func (s *Server) URL(path string) string {
 	return fmt.Sprintf("https://%s:%d%s", s.Host, s.Port, path)
 }
+
+// Ping send a get request to the server to check if it is up
+func (s *Server) Ping(client *http.Client) bool {
+	resp, err := s.Request(client, "/ping", http.MethodGet, nil, nil)
+	if err != nil {
+		return false
+	}
+	if resp.StatusCode != http.StatusOK {
+		return false
+	}
+	return true
+}

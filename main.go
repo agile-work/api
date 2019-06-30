@@ -130,7 +130,7 @@ func main() {
 	}()
 
 	<-stopChan
-	fmt.Println("Shutting down API...")
+	fmt.Println("\nShutting down API...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	srv.Shutdown(ctx)
 	defer cancel()

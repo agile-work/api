@@ -40,7 +40,8 @@ func (mdls *Modules) Load() error {
 	}
 
 	for _, instanceCode := range modulesInstanceIDs {
-		moduleDefJSON, err := rdb.Get("module:def:" + instanceCode)
+		moduleDefRedisKey := fmt.Sprintf("module:def:%s", instanceCode)
+		moduleDefJSON, err := rdb.Get(moduleDefRedisKey)
 		if err != nil {
 			return err
 		}
@@ -50,7 +51,16 @@ func (mdls *Modules) Load() error {
 		if err != nil {
 			return err
 		}
-		srv.UP = true
+		srv.UP = srv.Ping(mdls.Client)
+		if !srv.UP {
+			if err := rdb.Delete(moduleDefRedisKey); err != nil {
+				return err
+			}
+			if _, err := rdb.LRem("api:modules", 0, moduleDefRedisKey); err != nil {
+				return err
+			}
+			continue
+		}
 
 		if mdl, ok := mdls.List[srv.Name]; ok {
 			mdl.AddServer(srv)
