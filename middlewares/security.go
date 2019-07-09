@@ -25,13 +25,6 @@ func Authorization(next http.Handler) http.Handler {
 				return
 			}
 
-			if value, ok := payload["user_id"]; ok {
-				r.Header.Add("userID", value.(string))
-			} else {
-				http.Error(w, "invalid token", http.StatusUnauthorized)
-				return
-			}
-
 			if value, ok := payload["language_code"]; ok && r.Header.Get("Content-Language") == "" {
 				r.Header.Add("Content-Language", value.(string))
 			}
