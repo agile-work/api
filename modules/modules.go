@@ -77,11 +77,17 @@ func (mdls *Modules) Load() error {
 		mdls.List = make(map[string]*Module)
 	}
 
+	total := 0
 	for _, m := range mdls.List {
-		fmt.Printf("module %s(instances:%d) ready\n", m.Name, len(m.Servers))
+		for _, s := range m.Servers {
+			if s.Ping(mdls.Client) {
+				total++
+			}
+		}
+		fmt.Printf("module %s(instances:%d) ready\n", m.Name, total)
 	}
 
-	if len(mdls.List) == 0 {
+	if total == 0 {
 		fmt.Printf("no modules loaded\n")
 	}
 
